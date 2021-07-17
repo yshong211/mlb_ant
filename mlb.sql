@@ -3,11 +3,13 @@
 
 /* Only use these lines for the very first time. */
 
-DROP DATABASE IF EXISTS `mlb`;
+# DROP DATABASE IF EXISTS `mlb`;
 CREATE DATABASE `mlb`;
 USE `mlb`;
 
-DROP TABLE Pitches;
+/* Pitches */
+
+# DROP TABLE Pitches;
 
 CREATE TABLE Pitches (
 	px DECIMAL(5,3),
@@ -37,8 +39,8 @@ CREATE TABLE Pitches (
     pfx_z DECIMAL(4,2),
     nasty INTEGER,
     zone INTEGER,
-    code VARCHAR(3),
-    type VARCHAR(2),
+    `code` VARCHAR(3),
+    `type` VARCHAR(2),
     pitch_type VARCHAR(2),
     event_num INTEGER,
     b_score INTEGER,
@@ -84,9 +86,81 @@ z0 = NULLIF(@z0, ''), pfx_x = IF(@pfx_x='', NULL, TRUNCATE(@pfx_x, 2)),
 pfx_z = IF(@pfx_z='', NULL, TRUNCATE(@pfx_z, 2)), nasty = NULLIF(@nasty, ''),
 zone = NULLIF(@zone, ''), pitch_type = NULLIF(@pitch_type, '');
 
-
 SELECT * FROM Pitches WHERE ab_id = 2015000177;
 
 SELECT * FROM Pitches WHERE ab_id = 2015000073;
 
 SELECT * FROM Pitches;
+
+
+/* Games */
+
+DROP TABLE Games;
+
+CREATE TABLE Games (
+	attendance INTEGER,
+    away_final_score INTEGER,
+    away_team VARCHAR(4),
+    `date` DATE,
+    elasped_time INTEGER,
+    g_id INTEGER NOT NULL,
+    home_final_score INTEGER,
+    home_team VARCHAR(4),
+    start_time TIME,
+    umpire_1B VARCHAR(30),
+    umpire_2B VARCHAR(30),
+    umpire_3B VARCHAR(30),
+    umpire_HB VARCHAR(30),
+    venue_name VARCHAR(50),
+    weather VARCHAR(30),
+    wind VARCHAR(30),
+    delay INTEGER,
+    temperature INTEGER,
+    `condition` VARCHAR(20),
+    speed VARCHAR(10),
+    direction VARCHAR(20),
+	PRIMARY KEY (g_id)
+);
+
+LOAD DATA INFILE "mlb/archive/games.csv"
+INTO TABLE Games
+FIELDS TERMINATED BY "," ENCLOSED BY '"'
+LINES TERMINATED BY "\n"
+IGNORE 1 ROWS;
+
+SELECT * FROM Games;
+
+SELECT * FROM Games WHERE umpire_HB = "Joe West";
+
+
+/* AtBats */
+/* For top column, 1 if true, 0 if false */
+
+DROP TABLE AtBats;
+
+CREATE TABLE AtBats (
+	ab_id INTEGER UNSIGNED NOT NULL,
+    batter_id INTEGER UNSIGNED,
+    `event` VARCHAR(20),
+    g_id INTEGER UNSIGNED,
+    inning TINYINT UNSIGNED,
+    o TINYINT UNSIGNED,
+    p_score TINYINT UNSIGNED,
+    p_throws CHAR(1),
+    pitcher_id INTEGER UNSIGNED,
+    stand CHAR(1),
+    top BOOLEAN,
+    PRIMARY KEY (ab_id)
+);
+
+LOAD DATA INFILE "mlb/archive/atbats.csv"
+INTO TABLE AtBats
+FIELDS TERMINATED BY "," ENCLOSED BY '"'
+LINES TERMINATED BY "\n"
+IGNORE 1 ROWS
+(ab_id, batter_id, `event`, g_id, inning, o, p_score,
+p_throws, pitcher_id, stand, @top)
+SET
+top = IF(@top = 'True', 1, 0);
+
+SELECT * FROM AtBats;
