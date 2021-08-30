@@ -11,7 +11,8 @@ We first merge all the information from `pitches.csv`, `atbats.csv`, `games.csv`
 So far, we have used the following machine learning algorithms:
 * XGBoost
 * KNN
-* Naïve Bayes
+* Random Forest
+* Support Vector Machine
 
 ### XGBoost
 
@@ -21,5 +22,13 @@ So far, we have used the following machine learning algorithms:
 
 `KNeighborsClassifier(n_neighbors=11)`
 
-### Naïve Bayes
+### Random Forest
+
+`RandomForestClassifier((n_estimators = 2000, max_depth = 10,
+ min_samples_leaf = 12,
+ min_samples_split = 16))`
+
+### Support Vector Machine
+
+`svm.SVC(kernel = 'linear')`
 
