@@ -6,7 +6,7 @@
 
 The initial approach of this project was done by first attempting to replicate the result that was already available: getting 51% overall accuracy over 11 pitch types (using XGBoostClassifier). The features that were used for prediction were all directly related to pitches only (available at `pitches.csv`), but we were also hoping that we can add more features, such as in which stadium were the games played, how was the weather condition, as well as the direction of the wind. Therefore, we decided to include those.
 
-We first merge all the information from `pitches.csv`, `atbats.csv`, `games.csv`, and `player_names.csv`. We train and test our model based on year 2018 data only. In addition to what were done to the codes from [Colab](https://colab.research.google.com/drive/1VaHWXq2yYuH-S-6WL_WD8VFSugcgoiUz#scrollTo=eNI5nrnYrxPV), we add the new feature that accounts for the temperature, wind, and the stadium. Moreover, ~~mention about recency feature~~
+We first merge all the information from `pitches.csv`, `atbats.csv`, `games.csv`, and `player_names.csv`. We train and test our model based on year 2018 data only. In addition to what were done to the codes from [Colab](https://colab.research.google.com/drive/1VaHWXq2yYuH-S-6WL_WD8VFSugcgoiUz#scrollTo=eNI5nrnYrxPV), we add the new feature that accounts for the temperature, wind, and the stadium. Moreover, we have decided to include the proportion of pitch types thrown by each individual pitcher, hoping that our machine learning model will pick up the fact that each individual pitcher throws different, certain types of pitches. Hence, we included the current weighing scheme for pitch type proportion by year as following: **2017 : 2018 = 1 : 4**. Also, for convenience, we combined the pitch types for two-seam fastball and four-seam fastball as one fastball, and knuckleball and knuckle-curve as one knuckleball.
 
 So far, we have used the following machine learning algorithms:
 * XGBoost
@@ -14,7 +14,11 @@ So far, we have used the following machine learning algorithms:
 * Random Forest
 * Support Vector Machine
 
+Note that for consistency, we have used the parameter `random_state = 77777`.
+
 ### XGBoost
+
+XGBoost shows the fastest runtime, with the highest accuracy, 0.57.
 
 `xgb.XGBClassifier(eval_metric='mlogloss')`
 
@@ -22,13 +26,19 @@ So far, we have used the following machine learning algorithms:
 
 `KNeighborsClassifier(n_neighbors=11)`
 
+KNN takes a long time..
+
 ### Random Forest
 
 `RandomForestClassifier((n_estimators = 2000, max_depth = 10,
  min_samples_leaf = 12,
  min_samples_split = 16))`
 
+Result comment
+
 ### Support Vector Machine
 
 `svm.SVC(kernel = 'linear')`
+
+Even with the sample size of 1000, SVM takes a very long time... and result
 
