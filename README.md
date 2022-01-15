@@ -18,7 +18,7 @@ Note that for consistency, we have used the parameter `random_state = 77777`.
 
 ### XGBoost
 
-XGBoost shows the fastest runtime, with the highest accuracy, 0.57.
+XGBoost shows the fastest runtime, with the highest accuracy which is 57 percent
 
 `xgb.XGBClassifier(eval_metric='mlogloss')`
 
@@ -26,7 +26,7 @@ XGBoost shows the fastest runtime, with the highest accuracy, 0.57.
 
 `KNeighborsClassifier(n_neighbors=11)`
 
-KNN takes a long time..
+KNN takes much longer runtime than XGBoost. Had the accuracy of 56 percent
 
 ### Random Forest
 
@@ -34,11 +34,13 @@ KNN takes a long time..
  min_samples_leaf = 12,
  min_samples_split = 16))`
 
-Result comment
+Runtime was faster than KNN. Accuracy of 55 percent
 
 ### Support Vector Machine
 
 `svm.SVC(kernel = 'linear')`
 
-Even with the sample size of 1000, SVM takes a very long time... and result
+Even with the sample size of 1000, SVM takes a very long time... Therefore, we could not run with SVM since our size of dataset is more than 700000
+
+
 
