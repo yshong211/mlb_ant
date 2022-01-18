@@ -18,15 +18,17 @@ Note that for consistency, we have used the parameter `random_state = 77777`.
 
 ### XGBoost
 
-XGBoost shows the fastest runtime, with the highest accuracy which is 57 percent
+XGBoost shows the fastest runtime, with the highest accuracy which is 57 percent.
 
 `xgb.XGBClassifier(eval_metric='mlogloss')`
+
+Using Scikit's `GridSearchCV()`, we have attempted to find the best parameters for our XGBoost model, but the accuracy was very similar to the one that was achieved by using default settings.
 
 ### KNN
 
 `KNeighborsClassifier(n_neighbors=11)`
 
-KNN takes much longer runtime than XGBoost. Had the accuracy of 56 percent
+KNN takes much longer runtime than XGBoost. It had the accuracy of 56 percent, when `K = 49`.
 
 ### Random Forest
 
@@ -34,13 +36,16 @@ KNN takes much longer runtime than XGBoost. Had the accuracy of 56 percent
  min_samples_leaf = 12,
  min_samples_split = 16))`
 
-Runtime was faster than KNN. Accuracy of 55 percent
+Runtime was faster than KNN. It had the accuracy of 55 percent.
 
 ### Support Vector Machine
 
 `svm.SVC(kernel = 'linear')`
 
-Even with the sample size of 1000, SVM takes a very long time... Therefore, we could not run with SVM since our size of dataset is more than 700000
+Even with the sample size of 1000, SVM takes a very long time... Therefore, we could not run with SVM since our size of dataset is more than 700000.
 
+According to [scikit-learn Documentation for SVM](https://scikit-learn.org/stable/modules/svm.html#complexity), the complexity may lie anywhere between O(X * n^2) to O(X * n^3), where X is the number of features and n is the number of records (pitches). Therefore, it is not feasible for such a large dataset like this one.
 
+## Conclusion
 
+We have attempted various techniques for both data wrangling and modeling. We have added extra features that were not present in the original project. However, the difficulties arose and since the amount of dataset were huge, it had a tendency of overfitting; the new features did not help. But this was a great opportunity to explore around with the huge dataset, load, and combine, to make our own models for our prediction.
