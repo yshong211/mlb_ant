@@ -1,51 +1,60 @@
 # mlb_ant: Major League Baseball Pitch Type Prediction
 
-[**mlb_ant**](https://github.com/yshong211/mlb_ant) is a Data Science Project exploring various machine learning methods that will predict the major leaguers' pitch type, based on the game-situational data. The initial idea came from [here](https://towardsdatascience.com/predicting-mlb-pitch-probability-based-on-the-game-situation-1afc5a01cf3), with the MLB Data being available at [Kaggle Website](https://www.kaggle.com/pschale/mlb-pitch-data-20152018). Majority of the idea came from this [Google Colaboratory](https://colab.research.google.com/drive/1VaHWXq2yYuH-S-6WL_WD8VFSugcgoiUz#scrollTo=eNI5nrnYrxPV), which can also be redirected from the "here" above.
+[**mlb_ant**](https://github.com/yshong211/mlb_ant) is a Data Science Project exploring various machine learning methods that will predict the major leaguers' pitch type, based on the game-situational data. This project draws inspiration from an intriguing analysis shared [here](https://towardsdatascience.com/predicting-mlb-pitch-probability-based-on-the-game-situation-1afc5a01cf3), utilizing comprehensive MLB game data available on the [Kaggle Website](https://www.kaggle.com/pschale/mlb-pitch-data-20152018). A substantial part of our methodology is influenced by this insightful [Google Colaboratory notebook](https://colab.research.google.com/drive/1VaHWXq2yYuH-S-6WL_WD8VFSugcgoiUz#scrollTo=eNI5nrnYrxPV).
 
-## Approach
+## Project Overview
 
-The initial approach of this project was done by first attempting to replicate the result that was already available: getting 51% overall accuracy over 11 pitch types (using XGBoostClassifier). The features that were used for prediction were all directly related to pitches only (available at `pitches.csv`), but we were also hoping that we can add more features, such as in which stadium were the games played, how was the weather condition, as well as the direction of the wind. Therefore, we decided to include those.
+Initially, our endeavor was to reproduce the existing results, achieving a 51% prediction accuracy across 11 distinct pitch types using the XGBoostClassifier. Our primary dataset was the pitch data (`pitches.csv`), but our vision extended beyond mere replication. We hypothesized that integrating more situational variables—like the game's stadium, weather conditions, and wind directions—could refine our model's accuracy.
 
-We first merge all the information from `pitches.csv`, `atbats.csv`, `games.csv`, and `player_names.csv`. We train and test our model based on year 2018 data only. In addition to what were done to the codes from [Colab](https://colab.research.google.com/drive/1VaHWXq2yYuH-S-6WL_WD8VFSugcgoiUz#scrollTo=eNI5nrnYrxPV), we add the new feature that accounts for the temperature, wind, and the stadium. Moreover, we have decided to include the proportion of pitch types thrown by each individual pitcher, hoping that our machine learning model will pick up the fact that each individual pitcher throws different, certain types of pitches. Hence, we included the current weighing scheme for pitch type proportion by year as following: **2017 : 2018 = 1 : 4**. Also, for convenience, we combined the pitch types for two-seam fastball and four-seam fastball as one fastball, and knuckleball and knuckle-curve as one knuckleball.
+Here's how we enhanced our approach:
 
-So far, we have used the following machine learning algorithms:
-* XGBoost
-* KNN
-* Random Forest
-* Support Vector Machine
+1. **Data Integration:** We amalgamated data from multiple sources, including `pitches.csv`, `atbats.csv`, `games.csv`, and `player_names.csv`, focusing on enriching the features used in our models.
+2. **Feature Expansion:** Our models now consider additional factors such as temperature, wind conditions, and stadium characteristics. We recognized the unique pitching styles of individuals and incorporated data reflecting the proportion of pitch types thrown by each pitcher.
+3. **Data Segmentation:** We homed in on the 2018 season for training and testing our models, ensuring contemporary relevance and uniformity in the data.
+4. **Pitch Categorization:** For simplification and practicality, we combined certain pitch types, treating two-seam and four-seam fastballs as one category, and similarly grouping knuckleballs and knuckle-curves.
 
-Note that for consistency, we have used the parameter `random_state = 77777`.
+## Methodology and Insights
+
+We experimented with several machine learning models, each offering different advantages. Consistency in testing was maintained by setting `random_state = 77777`. Below, we outline our experience and findings with each method:
 
 ### XGBoost
 
-XGBoost shows the fastest runtime, with the highest accuracy which is 57 percent.
+Remarkably efficient, XGBoost provided the quickest results and the best accuracy at 57%.
 
-`xgb.XGBClassifier(eval_metric='mlogloss')`
+```python
+xgb.XGBClassifier(eval_metric='mlogloss')
+```
 
-Using Scikit's `GridSearchCV()`, we have attempted to find the best parameters for our XGBoost model, but the accuracy was very similar to the one that was achieved by using default settings.
+Despite extensive parameter tuning through Scikit-learn's GridSearchCV(), the default settings of XGBoost performed optimally, indicating a robustness in the algorithm.
 
-### KNN
+### KNN(K-Nearest Neighbors)
 
-`KNeighborsClassifier(n_neighbors=11)`
+The KNN model, while simpler, was significantly slower, achieving 56% accuracy with K = 49.
 
-KNN takes much longer runtime than XGBoost. It had the accuracy of 56 percent, when `K = 49`.
+```python
+KNeighborsClassifier(n_neighbors=11)
+```
 
 ### Random Forest
 
-`RandomForestClassifier((n_estimators = 2000, max_depth = 10,
- min_samples_leaf = 12,
- min_samples_split = 16))`
+Our Random Forest model was an improvement over KNN in terms of speed but marginally trailed in accuracy at 55%.
 
-Runtime was faster than KNN. It had the accuracy of 55 percent.
+```python
+RandomForestClassifier((n_estimators = 2000, max_depth = 10, min_samples_leaf = 12, min_samples_split = 16))
+```
 
 ### Support Vector Machine
 
+Due to its computational intensity, especially with large datasets, we couldn't feasibly implement the SVM for our full dataset.
+
+```python
 `svm.SVC(kernel = 'linear')`
+```
 
-Even with the sample size of 1000, SVM takes a very long time... Therefore, we could not run with SVM since our size of dataset is more than 700000.
-
-According to [scikit-learn Documentation for SVM](https://scikit-learn.org/stable/modules/svm.html#complexity), the complexity may lie anywhere between O(X * n^2) to O(X * n^3), where X is the number of features and n is the number of records (pitches). Therefore, it is not feasible for such a large dataset like this one.
+SVM’s complexity, potentially reaching up to O(X * n^3), made it unsuitable for our extensive dataset.
 
 ## Conclusion
 
-We have attempted various techniques for both data wrangling and modeling. We have added extra features that were not present in the original project. However, the difficulties arose and since the amount of dataset were huge, it had a tendency of overfitting; the new features did not help. But this was a great opportunity to explore around with the huge dataset, load, and combine, to make our own models for our prediction.
+This project was an ambitious journey through data manipulation and advanced analytical modeling. While the integration of new features didn't dramatically enhance performance, likely due to overfitting in such a vast dataset, the experience underscored the intricacies of working with large-scale data and provided invaluable insights.
+
+Moving forward, we aim to explore more dimensions, potentially incorporating player psychology and on-the-spot game decisions, to understand their impact on pitch selection. This exploration into real-world data has laid a solid foundation for future investigations and applications in sports analytics.
